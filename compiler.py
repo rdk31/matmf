@@ -222,9 +222,9 @@ class Compiler:
     def generateCore(self):
         self.mcfunctions["load"] = core.generateLoad()
 
-        func = McFunction()
+        """func = McFunction()
         func.addLine("function tickbuster:api/vote/in")
-        self.mcfunctions["start"] = func
+        self.mcfunctions["start"] = func"""
 
         self.mcfunctions = { **self.mcfunctions, **syscalls.generateSyscalls(), **core.generateInputs()}
 
@@ -286,6 +286,10 @@ class Compiler:
 
         self.readFile(inputFile)
         self.parseLabels()
+
+        if "app/main" not in self.mcfunctions:
+            raise Exception("main not found")
+
         self.printLabels()
         self.generateCore()
         self.generateRam()
