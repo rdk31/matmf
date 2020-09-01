@@ -2,6 +2,7 @@ import os
 import string
 import re
 import shutil
+import pathlib
 
 import config
 import ops
@@ -123,23 +124,25 @@ class Compiler:
     def generateDatapack(self):
         shutil.rmtree(config.NAMESPACE, ignore_errors=True)
 
-        os.makedirs(config.NAMESPACE + "\\data\\" + config.NAMESPACE + "\\functions", exist_ok=True)
-        os.makedirs(config.NAMESPACE + "\\data\\" + config.NAMESPACE + "\\functions\\app", exist_ok=True)
-        os.makedirs(config.NAMESPACE + "\\data\\" + config.NAMESPACE + "\\functions\\syscalls", exist_ok=True)
-        os.makedirs(config.NAMESPACE + "\\data\\" + config.NAMESPACE + "\\functions\\input", exist_ok=True)
-        os.makedirs(config.NAMESPACE + "\\data\\minecraft\\tags\\functions", exist_ok=True)
+        path = pathlib.Path.cwd()
 
-        with open(config.NAMESPACE + "\\pack.mcmeta", "w") as f:
+        os.makedirs(path / config.NAMESPACE / "data" / config.NAMESPACE / "functions", exist_ok=True)
+        os.makedirs(path / config.NAMESPACE / "data" / config.NAMESPACE / "functions" / "app", exist_ok=True)
+        os.makedirs(path / config.NAMESPACE / "data" / config.NAMESPACE / "functions" / "syscalls", exist_ok=True)
+        os.makedirs(path / config.NAMESPACE / "data" / config.NAMESPACE / "functions" / "input", exist_ok=True)
+        os.makedirs(path / config.NAMESPACE / "data" / "minecraft" / "tags" / "functions", exist_ok=True)
+
+        with open(path / config.NAMESPACE / "pack.mcmeta", "w") as f:
             f.write("{\"pack\":{\"pack_format\":1,\"description\":\"" + config.NAMESPACE + "\"}}\n")
 
-        with open(config.NAMESPACE + "\\data\\minecraft\\tags\\functions\\load.json", "w") as f:
+        with open(path / config.NAMESPACE / "data" / "minecraft" / "tags" / "functions" / "load.json", "w") as f:
             f.write("{\"values\":[\"" + config.NAMESPACE + ":load\"]}\n")
 
-        with open(config.NAMESPACE + "\\data\\minecraft\\tags\\functions\\tick.json", "w") as f:
+        with open(path / config.NAMESPACE / "data" / "minecraft" / "tags" / "functions" / "tick.json", "w") as f:
             f.write("{\"values\":[\"" + config.NAMESPACE + ":tick\"]}\n")
 
         for k, v in self.mcfunctions.items():
-            with open(config.NAMESPACE + "\\data\\" + config.NAMESPACE + "\\functions\\" + k + ".mcfunction", "w") as f:
+            with open(path / config.NAMESPACE / "data" / config.NAMESPACE / "functions" / (k + ".mcfunction"), "w") as f:
                 body = v.generate()
                 for line in body:
                     f.write(line + "\n")
